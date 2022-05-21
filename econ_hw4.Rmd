@@ -1,0 +1,116 @@
+---
+title: "HW4"
+author: "Sarah Rohlfing"
+date: '2022-05-21'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(janitor)
+library(here)
+# options(scipen = 99)
+```
+
+```{r}
+## read in data
+warming <- read.csv(here("data", "warming.csv")) %>% 
+  clean_names() 
+
+damages <- read.csv(here("data", "damages.csv")) %>% 
+  clean_names() 
+```
+
+```{r}
+
+```
+
+
+create a linear regregression for warming predicted line
+```{r}
+damages$warming2 <- damages$warming ^ 2
+
+predicted.lm <- lm(damages ~ 0 + warming + warming2 -1, data = damages)
+
+damages$seq_temp = seq(.1, 10, length.out = 556)
+
+
+
+```
+```{r}
+pred_dam_fun <- function(x){predicted.lm$coefficients[1]*x + predicted.lm$coefficients[2]*x^2}
+
+pulse <- 35000000000
+ggplot(data = damages, aes(y = damages, x = warming)) +
+  geom_jitter()+
+  labs(x = "Temperature (C)",
+       y = "Cost of Damages",
+       title = "Cost of climate Change") +
+stat_function(fun = pred_dam_fun, color = "red")
+```
+
+```{r}
+warming <- warming %>% 
+  mutate(pred_base = pred_dam_fun(x = warming_baseline)) %>% 
+  mutate(pred_pulse = pred_dam_fun(x = warming_pulse)) %>% 
+  mutate(diff_of_pulse = pred_pulse - pred_base) %>% 
+  mutate(damage_per_ton = diff_of_pulse/pulse)
+```
+
+
+```{r}
+ggplot(data = warming, aes(x = year, y = pred_base)) +
+  geom_smooth() +
+  labs(x = "year",
+       y = "Damage ($)",
+       title = "Baseline future damage predictions")
+
+ggplot(data = warming, aes(x = year, y = pred_pulse)) +
+  geom_smooth() +
+  labs(x = "year",
+       y = "Damage with pulse($)",
+       title = "Future damage predictions with CO2 Pulse")
+
+ggplot(data = warming, aes(x = year, y = diff_of_pulse)) +
+  geom_smooth() +
+  labs(x = "year",
+       y = "Difference of damage ($)",
+       title = "Difference in damage from baseline with added pulse")
+
+ggplot(data = warming, aes(x = year, y = damage_per_ton)) +
+  geom_smooth() +
+  labs(x = "year",
+       y = "Damage per ton of CO2($)",
+       title = "Damage of pulse per ton of CO2")
+
+```
+#3
+```{r}
+SCC <- warming %>% 
+  mutate(dr_01 = damage_per_ton/((1 + .01)^(year-2022))) %>% 
+  mutate(dr_02 = damage_per_ton/((1 + .02)^(year-2022))) %>%
+  mutate(dr_03 = damage_per_ton/((1 + .03)^(year-2022))) %>% 
+  mutate(dr_04 = damage_per_ton/((1 + .04)^(year-2022))) %>%
+  mutate(dr_05 = damage_per_ton/((1 + .05)^(year-2022))) %>% 
+  mutate(dr_06 = damage_per_ton/((1 + .06)^(year-2022))) %>% 
+  mutate(dr_07 = damage_per_ton/((1 + .07)^(year-2022))) %>%
+  mutate(dr_08 = damage_per_ton/((1 + .08)^(year-2022))) %>% 
+  mutate(dr_09 = damage_per_ton/((1 + .09)^(year-2022))) %>% 
+  mutate(dr_1 = damage_per_ton/((1 + .1)^(year-2022)))
+
+
+discount_rate <- c(1,2,3,4,5,6,7,8,9,10)
+scc_sums <- c(sum(SCC$dr_01), sum(SCC$dr_02), sum(SCC$dr_03), sum(SCC$dr_04), sum(SCC$dr_05), sum(SCC$dr_06), sum(SCC$dr_07), sum(SCC$dr_08), sum(SCC$dr_09), sum(SCC$dr_1))
+
+scc_data_frame <- data.frame(discount_rate, scc_sums)
+```
+
+```{r}
+ggplot(data = scc_data_frame, aes(x = discount_rate, y = scc_sums)) +
+  geom_point() +
+  labs(x = "discount rate (%)", 
+       y = "sum cost of carbon",
+       title = "The total cost of carbon in 2100 with different discount rates")
+```
+
