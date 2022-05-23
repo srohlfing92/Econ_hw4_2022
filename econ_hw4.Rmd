@@ -140,3 +140,22 @@ policy_A_PV <- sum(SCC$PV_A_base)*.5 + sum(SCC$PV_A_1.5)*.5 # expected present v
 policy_B_PV <- sum(SCC$PV_B_base) # expected present value of damages under policy B
 ```
 
+```{r}
+imp_cost <- policy_A_PV - policy_B_PV
+
+potential_cost <- c(0, 1e15, 2e15, 3e15, 4e15, 5e15, 6e15, 7e15, 8e15, 9e15)
+
+cost.df <- data.frame(potential_cost)
+
+cost_A <- function(x){policy_A_PV}
+cost_B <- function(x){policy_B_PV + x}
+
+cost.compare <- cost.df %>% 
+  mutate(cost_a = cost_A(cost.df)) %>% 
+  mutate(cost_b = cost_B(cost.df))
+
+ggplot(data = cost.compare) + 
+  geom_line(aes(x = potential_cost, y = cost_a)) +
+  geom_line(aes(x = potential_cost, y = cost_b$potential_cost))
+```
+
