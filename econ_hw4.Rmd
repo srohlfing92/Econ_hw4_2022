@@ -131,8 +131,12 @@ dr_rr_sum <- c(sum(SCC$dr_rr)) # = 71.354
 SCC <- SCC %>% 
   mutate(baseline_A_1.5 = pred_dam_fun(warming_baseline*1.5)) %>% 
   mutate(PV_A_1.5 = baseline_A_1.5/((1.02)^(year-2022))) %>% 
-  mutate(PV_A_base = pred_base/((1.02)^(year-2022)))
+  mutate(PV_A_base = pred_base/((1.02)^(year-2022))) %>% 
+  mutate(policy_B_temp = ifelse(year < 2050, warming_baseline, 1.29)) %>% 
+  mutate(baseline_B = pred_dam_fun(policy_B_temp)) %>% 
+  mutate(PV_B_base = baseline_B/((1.02)^(year-2022)))
 
-policy_A_base <- sum(SCC$PV_A_base)*.5 + sum(SCC$PV_A_1.5)*.5
+policy_A_PV <- sum(SCC$PV_A_base)*.5 + sum(SCC$PV_A_1.5)*.5 # expected present value of damages under policy A
+policy_B_PV <- sum(SCC$PV_B_base) # expected present value of damages under policy B
 ```
 
