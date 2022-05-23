@@ -113,4 +113,16 @@ ggplot(data = scc_data_frame, aes(x = discount_rate, y = scc_sums)) +
        y = "sum cost of carbon",
        title = "The total cost of carbon in 2100 with different discount rates")
 ```
+```{r}
+
+# r  = p + ng
+# find r when p=.001, n= 2, and g = 0.01
+rr <- .001 + 2 * .01 #= 0.021
+
+SCC <- warming %>% 
+  mutate(dr_rr = damage_per_ton/((1 + .021)^(year-2022))) 
+
+dr_rr_sum <- c(sum(SCC$dr_rr)) # = 71.354
+
+```
 
