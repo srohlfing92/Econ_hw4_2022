@@ -38,6 +38,7 @@ damages$seq_temp = seq(.1, 10, length.out = 556)
 
 
 ```
+
 ```{r}
 pred_dam_fun <- function(x){predicted.lm$coefficients[1]*x + predicted.lm$coefficients[2]*x^2}
 
@@ -117,12 +118,21 @@ ggplot(data = scc_data_frame, aes(x = discount_rate, y = scc_sums)) +
 
 # r  = p + ng
 # find r when p=.001, n= 2, and g = 0.01
-rr <- .001 + 2 * .01 #= 0.021
+rr <- .001 + 2 * .01 # = 0.021
 
 SCC <- warming %>% 
   mutate(dr_rr = damage_per_ton/((1 + .021)^(year-2022))) 
 
 dr_rr_sum <- c(sum(SCC$dr_rr)) # = 71.354
 
+```
+#5
+```{r}
+SCC <- SCC %>% 
+  mutate(baseline_A_1.5 = pred_dam_fun(warming_baseline*1.5)) %>% 
+  mutate(PV_A_1.5 = baseline_A_1.5/((1.02)^(year-2022))) %>% 
+  mutate(PV_A_base = pred_base/((1.02)^(year-2022)))
+
+policy_A_base <- sum(SCC$PV_A_base)*.5 + sum(SCC$PV_A_1.5)*.5
 ```
 
