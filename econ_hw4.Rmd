@@ -22,10 +22,6 @@ damages <- read.csv(here("data", "damages.csv")) %>%
   clean_names() 
 ```
 
-```{r}
-
-```
-
 
 create a linear regregression for warming predicted line
 ```{r}
@@ -34,8 +30,6 @@ damages$warming2 <- damages$warming ^ 2
 predicted.lm <- lm(damages ~ 0 + warming + warming2 -1, data = damages)
 
 damages$seq_temp = seq(.1, 10, length.out = 556)
-
-
 
 ```
 
@@ -109,7 +103,8 @@ scc_data_frame <- data.frame(discount_rate, scc_sums)
 
 ```{r}
 ggplot(data = scc_data_frame, aes(x = discount_rate, y = scc_sums)) +
-  geom_point() +
+ geom_point() +
+  geom_line() +
   labs(x = "discount rate (%)", 
        y = "sum cost of carbon",
        title = "The total cost of carbon in 2100 with different discount rates")
@@ -141,7 +136,7 @@ policy_B_PV <- sum(SCC$PV_B_base) # expected present value of damages under poli
 ```
 
 ```{r}
-imp_cost <- policy_A_PV - policy_B_PV
+imp_cost <- policy_A_PV - policy_B_PV # to get an estimate for cost
 
 potential_cost <- c(0, 1e15, 2e15, 3e15, 4e15, 5e15, 6e15, 7e15, 8e15, 9e15)
 
@@ -155,7 +150,10 @@ cost.compare <- cost.df %>%
   mutate(cost_b = cost_B(cost.df))
 
 ggplot(data = cost.compare) + 
-  geom_line(aes(x = potential_cost, y = cost_a)) +
-  geom_line(aes(x = potential_cost, y = cost_b$potential_cost))
+  geom_line(aes(x = potential_cost, y = cost_a), color = "blue") +
+  geom_line(aes(x = potential_cost, y = cost_b$potential_cost), color = "red")+
+  labs(y = "Total Implementation Cost ($)",
+       x = "Potential Additional Cost ($)",
+       title = "Comparison of cost of Policy A vs Policy B")
 ```
 
