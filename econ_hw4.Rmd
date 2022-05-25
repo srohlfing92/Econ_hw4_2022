@@ -150,8 +150,8 @@ cost.compare <- cost.df %>%
   mutate(cost_b = cost_B(cost.df))
 
 ggplot(data = cost.compare) + 
-  geom_line(aes(x = potential_cost, y = cost_a), color = "blue") +
-  geom_line(aes(x = potential_cost, y = cost_b$potential_cost), color = "red")+
+  geom_line(aes(x = potential_cost, y = cost_a), color = "blue") # policy A +
+  geom_line(aes(x = potential_cost, y = cost_b$potential_cost), color = "red")+ # policy B
   labs(y = "Total Implementation Cost ($)",
        x = "Potential Additional Cost ($)",
        title = "Comparison of cost of Policy A vs Policy B")
