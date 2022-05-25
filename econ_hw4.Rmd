@@ -1,6 +1,6 @@
 ---
 title: "HW4"
-author: "Sarah Rohlfing"
+author: "Sarah Rohlfing and Anusha Sridhara"
 date: '2022-05-21'
 output: html_document
 ---
@@ -107,7 +107,12 @@ ggplot(data = scc_data_frame, aes(x = discount_rate, y = scc_sums)) +
   geom_line() +
   labs(x = "discount rate (%)", 
        y = "sum cost of carbon",
-       title = "The total cost of carbon in 2100 with different discount rates")
+       title = "The total cost of carbon in 2100 with different discount rates",
+caption = "Figure 6: Predicted total cost of carbon in year 2100 at different discount rates 
+ranging from 1% to 10%")+
+    theme(plot.caption = element_text(hjust = 0.5),
+        axis.title.x = element_text(face = "bold"),
+        axis.title.y = element_text(face = "bold"))
 ```
 ```{r}
 
@@ -150,13 +155,22 @@ cost.compare <- cost.df %>%
   mutate(cost_b = cost_B(cost.df))
 
 ggplot(data = cost.compare) + 
-  geom_line(aes(x = potential_cost, y = cost_a), color = "blue") # policy A +
-  geom_line(aes(x = potential_cost, y = cost_b$potential_cost), color = "red")+ # policy B
+  geom_line(aes(x = potential_cost, y = cost_a), color = "blue") + # policy A 
+  geom_line(aes(x = potential_cost, y = cost_b$potential_cost), color = "red")+  # policy B
   labs(y = "Total Implementation Cost ($)",
        x = "Potential Additional Cost ($)",
-       title = "Comparison of cost of Policy A vs Policy B")
-  
-  intercept <- function(x){policy_A_PV-(policy_B_PV+x)}
+       title = "Comparison of cost of Policy A v/s Policy B",
+       caption = "Figure 7: Comparison of costs of mitigation from Policy A to Policy B. 
+       The blue line indicates Policy A and the red line indicates Policy B")+
+    theme(plot.caption = element_text(hjust = 0.5),
+        axis.title.x = element_text(face = "bold"),
+        axis.title.y = element_text(face = "bold"))
+
+```
+
+
+```{r}
+ intercept <- function(x){policy_A_PV-(policy_B_PV+x)}
 tipping_point <- uniroot(intercept, c(1e15,2.5e15))$root # = 2.235e15
 ```
 
