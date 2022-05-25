@@ -155,5 +155,8 @@ ggplot(data = cost.compare) +
   labs(y = "Total Implementation Cost ($)",
        x = "Potential Additional Cost ($)",
        title = "Comparison of cost of Policy A vs Policy B")
+  
+  intercept <- function(x){policy_A_PV-(policy_B_PV+x)}
+tipping_point <- uniroot(intercept, c(1e15,2.5e15))$root # = 2.235e15
 ```
 
